@@ -20,11 +20,15 @@ public class AppDbContext : DbContext
         {
             e.Property(u => u.Email).HasMaxLength(255);
             e.HasIndex(u => u.Email).IsUnique();
+            e.Property(u => u.FirstName).HasMaxLength(100);
+            e.Property(u => u.LastName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Account>(e =>
         {
             e.Property(a => a.Balance).HasPrecision(18, 2);
+            e.Property(a => a.Name).HasMaxLength(100);
+            e.Property(a => a.Currency).HasMaxLength(3);
         });
 
         modelBuilder.Entity<Category>(e =>
@@ -33,8 +37,9 @@ public class AppDbContext : DbContext
         });
 
         modelBuilder.Entity<Transaction>(e =>
-        {
-            e.Property(t => t.Amount).HasPrecision(18, 2);
+        {e.Property(t => t.Amount).HasPrecision(18, 2);
+            e.Property(t => t.Currency).HasMaxLength(3);
+            e.Property(t => t.Description).HasMaxLength(1000);
             e.HasIndex(t => new { t.UserId, t.Date });
             e.HasCheckConstraint("CK_transactions_amount", "\"Amount\" > 0");
         });
