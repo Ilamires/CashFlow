@@ -37,11 +37,15 @@ public class AppDbContext : DbContext
         });
 
         modelBuilder.Entity<Transaction>(e =>
-        {e.Property(t => t.Amount).HasPrecision(18, 2);
+        {
+            e.Property(t => t.Amount).HasPrecision(18, 2);
             e.Property(t => t.Currency).HasMaxLength(3);
             e.Property(t => t.Description).HasMaxLength(1000);
             e.HasIndex(t => new { t.UserId, t.Date });
             e.HasCheckConstraint("CK_transactions_amount", "\"Amount\" > 0");
+            e.HasCheckConstraint("CK_transactions_date",
+                "\"Date\" >= '1970-01-01 00:00:00+00'::timestamptz " +
+                "AND \"Date\" < '2300-01-01 00:00:00+00'::timestamptz");
         });
 
         modelBuilder.Entity<Budget>(e =>
@@ -49,6 +53,8 @@ public class AppDbContext : DbContext
             e.Property(b => b.LimitAmount).HasPrecision(18, 2);
             e.HasIndex(b => new { b.UserId, b.CategoryId, b.PeriodStart }).IsUnique();
             e.HasCheckConstraint("CK_budgets_period_start", "EXTRACT(DAY FROM \"PeriodStart\") = 1");
+            e.HasCheckConstraint("CK_budgets_period_range",
+                "\"PeriodStart\" >= DATE '1970-01-01' AND \"PeriodStart\" < DATE '2300-01-01'");
         });
     }
 }
