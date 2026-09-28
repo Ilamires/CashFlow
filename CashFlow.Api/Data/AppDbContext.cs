@@ -1,6 +1,7 @@
 using CashFlow.Api.Models;
 using Microsoft.EntityFrameworkCore;
-namespace CashFlow.Api;
+
+namespace CashFlow.Api.Data;
 
 public class AppDbContext : DbContext
 {
