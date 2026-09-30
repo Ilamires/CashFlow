@@ -47,6 +47,13 @@ public class AppDbContext : DbContext
             e.HasCheckConstraint("CK_transactions_date",
                 "\"Date\" >= '1970-01-01 00:00:00+00'::timestamptz " +
                 "AND \"Date\" < '2300-01-01 00:00:00+00'::timestamptz");
+            e.HasOne(t => t.Account)
+                .WithMany(a => a.Transactions)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(t => t.Category)
+                .WithMany(c => c.Transactions)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Budget>(e =>
@@ -56,6 +63,9 @@ public class AppDbContext : DbContext
             e.HasCheckConstraint("CK_budgets_period_start", "EXTRACT(DAY FROM \"PeriodStart\") = 1");
             e.HasCheckConstraint("CK_budgets_period_range",
                 "\"PeriodStart\" >= DATE '1970-01-01' AND \"PeriodStart\" < DATE '2300-01-01'");
+            e.HasOne(b => b.Category)
+                .WithMany(c => c.Budgets)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
