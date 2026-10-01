@@ -40,7 +40,7 @@ public class AccountService(AppDbContext db) : IAccountService
         => await db.Accounts
             .Where(a => a.UserId == userId)
             .OrderBy(a => a.Name)
-            .Select(a => ToResponse(a))
+            .Select(a => new AccountResponse(a.Id, a.Name, a.Currency, a.Balance, a.CreatedAt))
             .ToListAsync();
 
     public async Task<AccountResponse> GetByIdAsync(long userId, long id)
